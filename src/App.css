@@ -85,11 +85,38 @@ input[type="text"].form-control {
   color: var(--bs-body-color);
 }
 
+.qr-container {
+  min-height: 600px !important;
+}
+
+footer {
+  font-size: 0.875rem;
+  color: var(--bs-secondary);
+}
+
+footer a {
+  color: var(--bs-primary);
+}
+
+footer a:hover {
+  text-decoration: underline;
+}
+
+
+
+
 
 /* Small screen overrides */
 @media (max-width: 576px) {
+
+  .qr-container {
+    min-height: auto !important;
+  }
   .custom-card {
     min-height: auto !important;
+  }
+  .flip-card {
+    margin-bottom: 5rem;
   }
 
   .flip-card-front,
@@ -100,19 +127,31 @@ input[type="text"].form-control {
   .app-wrapper {
     align-items: flex-start !important;
     padding-top: 2rem;
-    padding-bottom: 2rem;
+    padding-bottom: 6rem;
     min-height: 100vh;
     margin-top: 50px;
+    
   }
 
-  .theme-toggle-wrapper {
+  /* .theme-toggle-wrapper {
     position: sticky !important;
     display: flex;
     justify-content: center;
     width: 100%;
     margin-bottom: 1rem;
-    z-index: 3;
+    
+  } */
+
+ 
+
+
+  /* Add this to App.css if dropdown isn't centering correctly on mobile */
+  .dropdown-menu-center {
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+
   }
+
 }
 
 
