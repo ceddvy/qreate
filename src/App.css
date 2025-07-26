@@ -102,8 +102,56 @@ footer a:hover {
   text-decoration: underline;
 }
 
+.theme-toggle-wrapper .dropdown-toggle {
+  border-radius: 1rem;
+  font-weight: 500;
+  font-size: 1rem;
+  padding: 0.6rem 1rem;
+}
+
+.theme-toggle-wrapper .dropdown-menu {
+  border-radius: 1rem;
+  padding: 0.5rem;
+  animation: fadeInDown 0.3s ease;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+.theme-toggle-wrapper .dropdown-item {
+  border-radius: 0.5rem;
+  transition: background-color 0.2s ease;
+}
+
+.theme-toggle-wrapper .dropdown-item:hover {
+  background-color: rgba(0, 123, 255, 0.1);
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-0.5rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 
 
+/* Loader */
+/* HTML: <div class="loader"></div> */
+/* HTML: <div class="loader"></div> */
+/* HTML: <div class="loader"></div> */
+/* HTML: <div class="loader"></div> */
+.loader {
+  width: 120px;
+  height: 20px;
+  --webkit-mask: radial-gradient(circle closest-side,#000 94%,#0000) left/20% 100%;
+  background: linear-gradient(#000 0 0) left/0% 100% no-repeat #ddd;
+  animation: l17 2s infinite steps(6);
+}
+@keyframes l17 {
+    100% {background-size:120% 100%}
+}
 
 
 /* Small screen overrides */
@@ -115,9 +163,9 @@ footer a:hover {
   .custom-card {
     min-height: auto !important;
   }
-  .flip-card {
+  /* .flip-card {
     margin-bottom: 5rem;
-  }
+  } */
 
   .flip-card-front,
   .flip-card-back {
@@ -128,9 +176,8 @@ footer a:hover {
     align-items: flex-start !important;
     padding-top: 2rem;
     padding-bottom: 6rem;
-    min-height: 100vh;
-    margin-top: 50px;
-    
+    /* min-height: 100vh; */
+    /* margin-top: 50px; */
   }
 
   /* .theme-toggle-wrapper {
@@ -141,10 +188,15 @@ footer a:hover {
     margin-bottom: 1rem;
     
   } */
-
+  .theme-toggle-wrapper {
+    position: static !important;
+    display: flex;
+    justify-content: flex-start;
+    width: 100%;
+    margin-bottom: 1rem;
+    padding: 0 1rem;
+  }
  
-
-
   /* Add this to App.css if dropdown isn't centering correctly on mobile */
   .dropdown-menu-center {
     left: 50% !important;

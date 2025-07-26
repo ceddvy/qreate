@@ -9,45 +9,29 @@ function App() {
   const [showIntro, setShowIntro] = useState(true);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [name, setName] = useState('');
-  const [theme, setTheme] = useState('system');
+  const [theme, setTheme] = useState('light');
   const [qrColor, setQrColor] = useState('#000000');
   const [logo, setLogo] = useState(null);
   const [logoSizePercent, setLogoSizePercent] = useState(25);
   const [qrSize, setQrSize] = useState(250);
+  const [loading, setLoading] = useState(false);
+
   const qrRef = useRef(null);
   const logoInputRef = useRef(null);
 
   const applyTheme = (mode) => {
-    if (mode === 'system') {
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      document.documentElement.setAttribute('data-bs-theme', prefersDark ? 'dark' : 'light');
-    } else {
-      document.documentElement.setAttribute('data-bs-theme', mode);
-    }
+    document.documentElement.setAttribute('data-bs-theme', mode);
   };
 
   const updateDarkMode = (mode = theme) => {
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    setIsDarkMode(mode === 'dark' || (mode === 'system' && prefersDark));
+    setIsDarkMode(mode === 'dark');
   };
 
   useEffect(() => {
-    const savedTheme = localStorage.getItem('theme') || 'system';
+    const savedTheme = localStorage.getItem('theme') || 'light';
     setTheme(savedTheme);
     applyTheme(savedTheme);
     updateDarkMode(savedTheme);
-
-    const listener = () => {
-      if (savedTheme === 'system') {
-        applyTheme('system');
-        updateDarkMode('system');
-      }
-    };
-
-    const darkQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    darkQuery.addEventListener('change', listener);
-
-    return () => darkQuery.removeEventListener('change', listener);
   }, []);
 
   useEffect(() => {
@@ -63,6 +47,14 @@ function App() {
     observer.observe(container);
     return () => observer.disconnect();
   }, []);
+
+  useEffect(() => {
+    if (name) {
+      setLoading(true);
+      const timeout = setTimeout(() => setLoading(false), 1700); // Simulate generation time
+      return () => clearTimeout(timeout);
+    }
+  }, [name, qrColor, logo, logoSizePercent]);
 
   const handleThemeChange = (newTheme) => {
     setTheme(newTheme);
@@ -108,7 +100,7 @@ function App() {
     setName('');
     setLogo(null);
     setLogoSizePercent(25);
-    setQrColor('#000000'); // Reset color input too
+    setQrColor('#000000');
     if (logoInputRef.current) {
       logoInputRef.current.value = '';
     }
@@ -129,41 +121,60 @@ function App() {
     <>
       {/* Top-right for larger screens */}
       <div className="theme-toggle-wrapper position-fixed top-0 end-0 z-3 p-3 d-none d-sm-block">
-        <button
-          className="btn btn-outline-secondary dropdown-toggle"
-          type="button"
-          data-bs-toggle="dropdown"
-          aria-expanded="false"
-        >
-          Theme: {theme.charAt(0).toUpperCase() + theme.slice(1)}
-        </button>
-        <ul className="dropdown-menu dropdown-menu-end">
-          <li><button className="dropdown-item" onClick={() => handleThemeChange('light')}>Light</button></li>
-          <li><button className="dropdown-item" onClick={() => handleThemeChange('dark')}>Dark</button></li>
-          <li><button className="dropdown-item" onClick={() => handleThemeChange('system')}>System</button></li>
-        </ul>
+        <div className="dropdown">
+          <button
+            className="btn btn-outline-primary dropdown-toggle shadow-sm rounded-pill px-3 py-2"
+            type="button"
+            id="dropdownMenuButtonLarge"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            🌗 Theme: {theme.charAt(0).toUpperCase() + theme.slice(1)}
+          </button>
+          <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButtonLarge">
+            <li>
+              <button className="dropdown-item d-flex align-items-center gap-2" onClick={() => handleThemeChange('light')}>
+                ☀️ Light
+              </button>
+            </li>
+            <li>
+              <button className="dropdown-item d-flex align-items-center gap-2" onClick={() => handleThemeChange('dark')}>
+                🌙 Dark
+              </button>
+            </li>
+          </ul>
+        </div>
       </div>
-
-      {/* Bottom-center for small screens */}
-      <div className="theme-toggle-wrapper position-fixed top-0 start-50 translate-middle-x p-3 d-block d-sm-none">
-        <button
-          className="btn btn-outline-secondary dropdown-toggle"
-          type="button"
-          data-bs-toggle="dropdown"
-          aria-expanded="false"
-        >
-          Theme: {theme.charAt(0).toUpperCase() + theme.slice(1)}
-        </button>
-        <ul className="dropdown-menu dropdown-menu-center show-on-hover">
-          <li><button className="dropdown-item" onClick={() => handleThemeChange('light')}>Light</button></li>
-          <li><button className="dropdown-item" onClick={() => handleThemeChange('dark')}>Dark</button></li>
-          <li><button className="dropdown-item" onClick={() => handleThemeChange('system')}>System</button></li>
-        </ul>
-      </div>
-
 
       <div className="app-wrapper d-flex justify-content-center align-items-center p-3">
         <div className={`flip-card ${showIntro ? '' : 'flipped'}`}>
+          {/* Small screens theme dropdown */}
+          <div className="theme-toggle-wrapper d-block d-sm-none mt-2">
+            <div className="dropdown w-100">
+              <button
+                className="btn btn-outline-primary dropdown-toggle w-100 shadow-sm"
+                type="button"
+                id="dropdownMenuButtonSmall"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                🌗 Theme: {theme.charAt(0).toUpperCase() + theme.slice(1)}
+              </button>
+              <ul className="dropdown-menu dropdown-menu-center w-100" aria-labelledby="dropdownMenuButtonSmall">
+                <li>
+                  <button className="dropdown-item d-flex align-items-center gap-2" onClick={() => handleThemeChange('light')}>
+                    ☀️ Light
+                  </button>
+                </li>
+                <li>
+                  <button className="dropdown-item d-flex align-items-center gap-2" onClick={() => handleThemeChange('dark')}>
+                    🌙 Dark
+                  </button>
+                </li>
+              </ul>
+            </div>
+          </div>
+
           <div className="flip-card-inner card shadow-lg rounded-4 w-100 custom-card">
             {/* FRONT */}
             <div className="flip-card-front d-flex flex-column justify-content-center align-items-center text-center">
@@ -218,20 +229,20 @@ function App() {
                         Reset
                       </button>
                     </div>
-
                   </div>
 
                   <div className="flex-fill">
-                    <label className="fw-semibold d-block mb-2">Upload Logo:</label>
+                    {/* <label className="fw-semibold d-block mb-2">Upload Logo:</label> */}
+                    <label htmlFor="logoUpload" className="fw-semibold d-block mb-2">Upload Logo:</label>
                     <input
                       type="file"
+                      id="logoUpload"
                       className="form-control"
                       accept="image/*"
                       onChange={handleLogoUpload}
                       ref={logoInputRef}
                     />
 
-                    {/* Logo size slider */}
                     {logo && (
                       <div className="mt-3">
                         <label className="fw-semibold d-block mb-1">Logo Size: {logoSizePercent}%</label>
@@ -253,7 +264,13 @@ function App() {
                   className="mt-2 p-4 border border-secondary rounded bg-light-subtle text-center d-flex justify-content-center align-items-center qr-container"
                   ref={qrRef}
                 >
-                  {name ? (
+                  {loading ? (
+                    
+                    <div className="d-flex flex-column justify-content-center align-items-center" style={{ height: qrSize }}>
+                     <div className="loader"></div>
+                      <p className="text-muted mb-0 mt-2">Generating your QR code, please wait...</p>
+                    </div>
+                  ) : name ? (
                     <div style={{ position: 'relative', width: qrSize, height: qrSize }}>
                       <QRCodeCanvas
                         value={name}
@@ -306,11 +323,11 @@ function App() {
       <footer className="text-center mt-5 mb-3 text-muted small">
         <div className="container">
           <p>
-            Developed by <strong>Ceddy</strong> &middot; 
-            <a 
-              href="https://github.com/ceddvy/qreate" 
-              className="ms-1 text-decoration-none" 
-              target="_blank" 
+            Developed by <strong>Ceddy</strong> &middot;
+            <a
+              href="https://github.com/ceddvy/qreate"
+              className="ms-1 text-decoration-none"
+              target="_blank"
               rel="noopener noreferrer"
             >
               View on GitHub
@@ -319,11 +336,9 @@ function App() {
           <p>
             This QR generator is 100% free and runs entirely in your browser. <strong>No data is collected or stored.</strong>
           </p>
-
           <p className="mt-2">&copy; {new Date().getFullYear()} QReatify. All rights reserved.</p>
         </div>
       </footer>
-
     </>
   );
 }
